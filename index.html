@@ -4,110 +4,133 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>命名前夜</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai:wght@400;500&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-base: #0a0806;
-      --bg-card: rgba(20, 16, 12, 0.65);
-      --border: rgba(140, 110, 80, 0.2);
-      --border-hover: rgba(180, 140, 90, 0.45);
-      --text-main: #e8e4df;
-      --text-sub: #9c8b78;
-      --accent: #c49a6c;
-      --accent-glow: rgba(196, 154, 108, 0.3);
-      --glass: rgba(255, 255, 255, 0.03);
-      --radius: 14px;
-      --shadow: 0 10px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
-      --transition: all 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      --bg-page: #f6f5f3;
+      --bg-card: #ffffff;
+      --text-main: #1a1a1a;
+      --text-sub: #888888;
+      --border: #e5e5e5;
+      --border-active: #111111;
+      --hover-bg: #fafafa;
+      --selected-bg: #f2f2f2;
+      --radius: 3px;
+      --transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+      --shadow: 0 2px 16px rgba(0,0,0,0.04);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
     body {
-      font-family: "SF Pro Text", "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
-      background: radial-gradient(circle at 50% 0%, #1c1612 0%, var(--bg-base) 70%);
+      font-family: 'LXGW WenKai', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      background: var(--bg-page);
       color: var(--text-main);
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 20px;
+      padding: 30px 20px;
       -webkit-font-smoothing: antialiased;
+      line-height: 1.6;
     }
 
     .app-container {
-      width: 100%; max-width: 640px; background: var(--bg-card);
-      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-      border: 1px solid var(--border); border-radius: var(--radius);
-      box-shadow: var(--shadow); padding: 36px 28px;
+      width: 100%; max-width: 620px; background: var(--bg-card);
+      border: 1px solid var(--border); border-radius: 6px;
+      box-shadow: var(--shadow); padding: 44px 38px; /* 增加整体内边距 */
       position: relative; margin: auto; overflow: hidden;
+      border-top: 3px solid var(--text-main);
     }
 
-    .glow-line {
-      position: absolute; top: 0; left: 10%; width: 80%; height: 1px;
-      background: linear-gradient(90deg, transparent, var(--accent), transparent);
-      opacity: 0.5; animation: breathe 4s ease-in-out infinite; pointer-events: none; z-index: 5;
-    }
-    @keyframes breathe {
-      0%, 100% { opacity: 0.2; box-shadow: 0 0 6px transparent; }
-      50% { opacity: 0.7; box-shadow: 0 0 14px var(--accent-glow), 0 0 24px rgba(196, 154, 108, 0.15); }
+    .top-accent {
+      position: absolute; top: 0; left: 0; width: 100%; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-active), transparent);
+      opacity: 0.15; pointer-events: none;
     }
 
-    .progress-bar { display: flex; align-items: center; margin-bottom: 30px; position: relative; }
-    .progress-line { position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 100%; height: 2px; background: var(--border); z-index: 0; border-radius: 2px; }
-    .progress-fill { position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 0%; height: 2px; background: var(--accent); z-index: 1; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px var(--accent-glow); }
+    /* 进度指示器 */
+    .progress-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 34px; position: relative; padding: 0 4px; }
+    .progress-line { position: absolute; left: 20px; right: 20px; top: 50%; height: 1px; background: var(--border); transform: translateY(-50%); z-index: 0; }
+    .progress-fill { position: absolute; left: 20px; top: 50%; height: 1px; background: var(--text-main); transform: translateY(-50%); z-index: 1; transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
     .steps-indicator { display: flex; justify-content: space-between; width: 100%; z-index: 2; }
-    .step-dot { width: 26px; height: 26px; border-radius: 50%; background: rgba(0,0,0,0.4); border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--text-sub); transition: var(--transition); }
-    .step-dot.active { border-color: var(--accent); background: rgba(196, 154, 108, 0.15); color: var(--accent); box-shadow: 0 0 12px var(--accent-glow); }
+    .step-dot { width: 24px; height: 24px; border-radius: 50%; background: #fff; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; color: var(--text-sub); transition: var(--transition); font-family: 'Noto Serif SC', serif; }
+    .step-dot.active { border-color: var(--text-main); background: var(--text-main); color: #fff; transform: scale(1.1); }
 
-    .steps-wrapper { position: relative; min-height: 220px; transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-    .step { position: absolute; top: 0; left: 0; width: 100%; opacity: 0; transform: translateX(30px) scale(0.98); pointer-events: none; transition: var(--transition); visibility: hidden; }
-    .step.active { opacity: 1; transform: translateX(0) scale(1); pointer-events: auto; visibility: visible; position: relative; }
+    /* 步骤容器与动画 */
+    .steps-wrapper { position: relative; min-height: 260px; transition: height 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+    .step { position: absolute; top: 0; left: 0; width: 100%; opacity: 0; transform: translateY(12px); pointer-events: none; transition: var(--transition); visibility: hidden; }
+    .step.active { opacity: 1; transform: translateY(0); pointer-events: auto; visibility: visible; position: relative; }
 
-    h2 { font-size: 1.4rem; margin-bottom: 20px; font-weight: 500; letter-spacing: 0.8px; color: var(--text-main); }
-    .sub-title { font-size: 0.8rem; color: var(--text-sub); font-weight: 400; margin-left: 8px; opacity: 0.8; }
-    .category-label { font-size: 0.78rem; color: var(--text-sub); margin-bottom: 6px; display: block; letter-spacing: 1px; text-transform: uppercase; font-weight: 500; }
-
-    input[type="text"] { width: 100%; padding: 12px 14px; background: rgba(0,0,0,0.35); border: 1px solid var(--border); border-radius: 10px; color: var(--text-main); font-size: 0.95rem; margin-bottom: 22px; transition: var(--transition); }
-    input[type="text"]:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-glow); }
-    input::placeholder { color: rgba(156, 139, 120, 0.5); }
-
-    .options-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); gap: 10px; max-height: 240px; overflow-y: auto; padding-right: 6px; margin-bottom: 8px; }
-    .options-grid::-webkit-scrollbar { width: 4px; }
-    .options-grid::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    h2 { 
+      font-family: 'Noto Serif SC', serif; font-size: 1.5rem; font-weight: 600; letter-spacing: 1.5px; 
+      margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid var(--border); color: var(--text-main);
+    }
+    .sub-title { font-size: 0.8rem; color: var(--text-sub); font-weight: 400; margin-left: 8px; letter-spacing: 0; font-family: 'LXGW WenKai', sans-serif; }
     
-    .gender-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
+    .category-group { margin-bottom: 14px; margin-top: 6px; }
+    .category-label { font-size: 0.75rem; color: var(--text-sub); margin-bottom: 8px; display: block; letter-spacing: 1px; border-left: 2px solid var(--text-main); padding-left: 8px; }
+
+    /* 表单元素 */
+    input[type="text"] {
+      width: 100%; padding: 10px 0; background: transparent; border: none; border-bottom: 1px solid var(--border);
+      color: var(--text-main); font-size: 1rem; margin-bottom: 28px; transition: var(--transition); font-family: inherit;
+    }
+    input[type="text"]:focus { border-bottom-color: var(--text-main); }
+    input::placeholder { color: #bbb; font-style: italic; }
+
+    .gender-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 30px; }
+    
+    .options-grid { 
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 10px; 
+      max-height: 220px; overflow-y: auto; padding-right: 6px; padding-top: 4px; /* 增加顶部内边距防遮挡 */
+      margin-bottom: 12px; box-sizing: border-box;
+    }
+    .options-grid::-webkit-scrollbar { width: 3px; }
+    .options-grid::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+    
     .gender-btn, .tag-btn {
-      background: var(--glass); border: 1px solid var(--border); color: var(--text-sub); padding: 9px 6px; border-radius: 9px; cursor: pointer; transition: var(--transition); font-size: 0.84rem; font-weight: 500; text-align: center; user-select: none;
+      background: #fff; border: 1px solid var(--border); color: var(--text-sub); padding: 8px 6px; border-radius: var(--radius);
+      cursor: pointer; transition: var(--transition); font-size: 0.82rem; font-weight: 500; text-align: center; user-select: none;
+      font-family: 'LXGW WenKai', sans-serif;
     }
-    .gender-btn:hover, .tag-btn:hover { border-color: var(--border-hover); color: var(--text-main); transform: translateY(-1.5px); background: rgba(255,255,255,0.05); }
-    .gender-btn.selected, .tag-btn.selected { background: rgba(196, 154, 108, 0.12); border-color: var(--accent); color: var(--accent); box-shadow: 0 0 10px var(--accent-glow), inset 0 0 0 1px rgba(196, 154, 108, 0.3); transform: translateY(-1px); }
-    .tag-btn.disabled { opacity: 0.25; pointer-events: none; transform: none; box-shadow: none; }
+    .gender-btn:hover, .tag-btn:hover { border-color: var(--text-main); color: var(--text-main); transform: translateY(-2px); background: var(--hover-bg); }
+    .gender-btn.selected, .tag-btn.selected { background: var(--selected-bg); border-color: var(--border-active); color: var(--text-main); transform: translateY(-1px); box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
 
-    .nav-btns { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; }
-    .btn { padding: 10px 20px; border: none; border-radius: 9px; font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: var(--transition); letter-spacing: 0.5px; }
-    .btn.primary { background: var(--accent); color: #0a0806; box-shadow: 0 4px 14px var(--accent-glow); }
-    .btn.primary:hover:not(:disabled) { background: #d4a978; transform: translateY(-2px); box-shadow: 0 6px 18px rgba(196, 154, 108, 0.4); }
-    .btn.primary:disabled { background: #3a322a; color: #6b5d4d; cursor: not-allowed; opacity: 0.6; box-shadow: none; transform: none; }
-    .btn.secondary { background: transparent; border: 1px solid var(--border); color: var(--text-sub); }
-    .btn.secondary:hover { border-color: var(--text-sub); color: var(--text-main); }
+    /* 按钮组 */
+    .nav-btns { display: flex; justify-content: flex-end; gap: 12px; margin-top: 26px; padding-top: 18px; border-top: 1px dashed var(--border); }
+    .btn { padding: 9px 18px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: var(--transition); letter-spacing: 1px; font-family: 'LXGW WenKai', sans-serif; }
+    .btn.primary { background: var(--text-main); color: #fff; border-color: var(--text-main); }
+    .btn.primary:hover:not(:disabled) { background: #333; transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .btn.primary:disabled { background: #e0e0e0; border-color: #ddd; color: #999; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn.secondary { background: transparent; color: var(--text-sub); }
+    .btn.secondary:hover { border-color: var(--text-sub); color: var(--text-main); background: #fafafa; }
 
+    /* 结果区 */
     #output-text {
-      background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 10px; padding: 16px; white-space: pre-wrap; font-family: inherit; line-height: 1.65; color: #d4cfc8; min-height: 160px; max-height: 380px; overflow-y: auto; margin-bottom: 20px; font-size: 0.88rem; letter-spacing: 0.3px;
+      background: #fcfcfc; border: 1px solid var(--border); border-radius: 4px; padding: 20px; white-space: pre-wrap;
+      font-family: 'LXGW WenKai', monospace; line-height: 1.75; color: #333; min-height: 180px; max-height: 400px;
+      overflow-y: auto; margin-bottom: 22px; font-size: 0.9rem; letter-spacing: 0.5px;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.02);
     }
-    .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(15px); background: #c49a6c; color: #0a0806; padding: 8px 18px; border-radius: 6px; font-size: 0.82rem; opacity: 0; pointer-events: none; transition: var(--transition); box-shadow: 0 4px 12px rgba(0,0,0,0.4); z-index: 100; font-weight: 500; }
+    .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(10px); background: var(--text-main); color: #fff; padding: 8px 16px; border-radius: 4px; font-size: 0.8rem; opacity: 0; pointer-events: none; transition: var(--transition); font-family: 'LXGW WenKai', sans-serif; }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    @media (max-width: 520px) {
-      .app-container { padding: 28px 18px; }
-      h2 { font-size: 1.25rem; }
-      .options-grid { grid-template-columns: repeat(2, 1fr); max-height: 200px; }
+    @media (max-width: 540px) {
+      .app-container { padding: 30px 22px; }
+      h2 { font-size: 1.3rem; margin-bottom: 24px; }
+      .options-grid { grid-template-columns: repeat(2, 1fr); max-height: 190px; }
       .gender-selector { grid-template-columns: 1fr; }
+      .nav-btns { flex-direction: column-reverse; }
+      .btn { width: 100%; text-align: center; }
     }
   </style>
 </head>
 <body>
 
 <div class="app-container">
-  <div class="glow-line"></div>
+  <div class="top-accent"></div>
   <div class="progress-bar">
     <div class="progress-line"></div>
     <div class="progress-fill" id="progressFill"></div>
@@ -457,15 +480,21 @@ document.addEventListener('DOMContentLoaded', () => {
       group.className = 'category-group';
       group.innerHTML = `<span class="category-label">${cat} ${cat === '特殊辨识点' ? '<span class="sub-title">(选填)</span>' : ''}</span>`;
       const grid = document.createElement('div'); grid.className = 'options-grid';
-      grid.style.maxHeight = cat === '五官' || cat === '身材' ? '130px' : '100px';
+      grid.style.maxHeight = cat === '五官' || cat === '身材' ? '120px' : '90px';
       
       DATA.appearances.filter(a => a.category === cat).forEach(item => {
         const btn = document.createElement('button');
         btn.className = 'tag-btn'; btn.textContent = item.tag;
         btn.addEventListener('click', () => {
+          // ✅ 修复：支持点击已选项取消选择
+          const isAlreadySelected = btn.classList.contains('selected');
           grid.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('selected'));
-          btn.classList.add('selected');
-          state.appearance[cat] = item;
+          if (isAlreadySelected) {
+            delete state.appearance[cat];
+          } else {
+            btn.classList.add('selected');
+            state.appearance[cat] = item;
+          }
           updateNext2State();
         });
         grid.appendChild(btn);
@@ -516,7 +545,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (activeStep) requestAnimationFrame(() => { dom.wrapper.style.height = activeStep.offsetHeight + 'px'; });
   }
 
-  // ✅ 修复上一步导航与平滑过渡
   function goToStep(target) {
     if (target < 1 || target > 5) return;
     if (target > currentStep && !validateStep(currentStep)) return;
@@ -524,21 +552,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentEl = document.getElementById(`step${currentStep}`);
     const nextEl = document.getElementById(`step${target}`);
 
-    // 退出动画
     currentEl.classList.remove('active');
-    currentEl.style.transition = 'all 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-    currentEl.style.transform = target < currentStep ? 'translateX(40px) scale(0.98)' : 'translateX(-40px) scale(0.98)';
+    currentEl.style.transition = 'var(--transition)';
+    currentEl.style.transform = target < currentStep ? 'translateY(10px)' : 'translateY(-10px)';
     currentEl.style.opacity = '0'; currentEl.style.visibility = 'hidden';
 
-    // 入场准备
     nextEl.style.transition = 'none';
-    nextEl.style.transform = target < currentStep ? 'translateX(-40px) scale(0.98)' : 'translateX(40px) scale(0.98)';
+    nextEl.style.transform = target < currentStep ? 'translateY(-10px)' : 'translateY(10px)';
     nextEl.style.opacity = '0'; nextEl.style.visibility = 'visible';
 
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        nextEl.style.transition = 'all 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-        nextEl.style.transform = 'translateX(0) scale(1)';
+        nextEl.style.transition = 'var(--transition)';
+        nextEl.style.transform = 'translateY(0)';
         nextEl.style.opacity = '1';
         nextEl.classList.add('active');
         
@@ -548,12 +574,12 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    if (target === 5) setTimeout(() => { generateOutput(); adjustHeight(); }, 100);
+    if (target === 5) setTimeout(() => { generateOutput(); adjustHeight(); }, 80);
   }
 
   function validateStep(step) {
     if (step === 1) return state.name.trim() && state.gender;
-    if (step === 2) return Object.keys(state.appearance).length >= 3; // ✅ 特殊辨识点非必填
+    if (step === 2) return Object.keys(state.appearance).length >= 3;
     if (step === 3) return state.profession !== null;
     if (step === 4) return state.personalities.length >= 1;
     return false;
@@ -565,7 +591,6 @@ document.addEventListener('DOMContentLoaded', () => {
     dom.dots.forEach((dot, i) => dot.classList.toggle('active', i < currentStep));
   }
 
-  // 绑定导航
   dom.next1.addEventListener('click', () => goToStep(2));
   document.getElementById('back2').addEventListener('click', () => goToStep(1));
   dom.next2.addEventListener('click', () => goToStep(3));
@@ -575,7 +600,6 @@ document.addEventListener('DOMContentLoaded', () => {
   dom.generateBtn.addEventListener('click', () => goToStep(5));
   dom.restartBtn.addEventListener('click', () => location.reload());
 
-  // Step 1
   dom.charName.addEventListener('input', e => { state.name = e.target.value; updateNext1State(); });
   dom.genderBtns.forEach(btn => btn.addEventListener('click', () => {
     dom.genderBtns.forEach(b => b.classList.remove('selected'));
@@ -585,7 +609,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateNext2State() { dom.next2.disabled = Object.keys(state.appearance).length < 3; }
   function updateNext3State() { dom.next3.disabled = state.profession === null; }
 
-  // Step 5
   function generateOutput() {
     const catOrder = ['五官', '瞳孔颜色', '身材', '特殊辨识点'];
     const appearText = catOrder.map(cat => {
@@ -600,7 +623,6 @@ document.addEventListener('DOMContentLoaded', () => {
       persText = `[${state.personalities[0].tag}]：${state.personalities[0].description}`;
     } else if (state.personalities.length === 2) {
       const t1 = state.personalities[0].tag, t2 = state.personalities[1].tag;
-      // ✅ 修复组合匹配
       const combo = DATA.personality_combinations.find(c => c.combination === `${t1} - ${t2}` || c.combination === `${t2} - ${t1}`);
       persText = combo ? `[${t1} × ${t2}]：${combo.description}` : state.personalities.map(p => `[${p.tag}]：${p.description}`).join('\n');
     }
