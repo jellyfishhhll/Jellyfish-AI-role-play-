@@ -4,149 +4,168 @@
 <meta charset="UTF-8">
 <title>AI Roleplay 角色生成器</title>
 <style>
-body { font-family: "Microsoft YaHei", sans-serif; background: #fef8f5; color: #333; padding: 20px; }
-h1 { text-align:center; color:#f08c82; margin-bottom:30px;}
-.container { max-width: 600px; margin: auto; background: #fff6f3; padding: 25px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.08);}
-label { display:block; margin-top: 15px; font-weight: bold; }
-select, input[type="text"], button { width: 100%; padding: 10px; margin-top:5px; border-radius: 6px; border: 1px solid #e0c6c0; font-size: 14px; }
-button { background-color: #f08c82; color: white; border:none; cursor:pointer; font-weight:bold; transition:0.2s; }
-button:hover { background-color: #e6736e; }
-.result { margin-top:25px; padding: 20px; background:#fff0eb; border-radius:8px; line-height:1.6; }
-.step { display:none; animation: fadeIn 0.4s ease-in-out; }
-.step.active { display:block; }
-@keyframes fadeIn { from {opacity:0} to {opacity:1} }
-.progress-bar { height: 8px; background: #f0d4cd; border-radius:4px; margin-bottom:20px; overflow:hidden;}
-.progress { height: 100%; background: #f08c82; width:0%; transition: width 0.3s ease; border-radius:4px;}
+body { font-family: "Microsoft YaHei", sans-serif; background:#fdf6f0; padding:20px; }
+h1 { text-align:center; color:#f08c82; }
+.container { max-width: 700px; margin:auto; background:#fff6f3; padding:25px; border-radius:12px; box-shadow:0 5px 20px rgba(0,0,0,0.1);}
+label { font-weight:bold; display:block; margin-top:15px; }
+input[type="text"] { width:100%; padding:10px; margin-top:5px; border-radius:6px; border:1px solid #e0c6c0; font-size:14px; }
+.button-group { display:flex; gap:10px; flex-wrap: wrap; margin-top:10px; }
+.button-group button { padding:10px 15px; border-radius:8px; border:1px solid #f08c82; background:#fff; cursor:pointer; transition:0.2s; flex:1; }
+.button-group button.selected { background:#f08c82; color:white; }
+.button-group button:hover { background:#f7c1b5; }
+.result { margin-top:25px; padding:20px; background:#fff0eb; border-radius:8px; line-height:1.6; }
 </style>
 </head>
 <body>
-<h1>AI Roleplay 角色生成器</h1>
+<h1>AI Roleplay 角色生成器（静态版）</h1>
 <div class="container">
 
-    <div class="progress-bar"><div class="progress" id="progress"></div></div>
+    <!-- 姓名输入 -->
+    <label>角色姓名:</label>
+    <input type="text" id="charName" placeholder="输入角色姓名">
 
-    <!-- 步骤1：名称+性别 -->
-    <div class="step active" id="step1">
-        <label>角色名称:</label>
-        <input type="text" id="charName" placeholder="输入角色名称">
-        <label>性别:</label>
-        <select id="charGender">
-            <option value="男">男</option>
-            <option value="女">女</option>
-            <option value="其他">其他</option>
-        </select>
-        <button onclick="nextStep(1)">下一步</button>
+    <!-- 性别选择 -->
+    <label>选择性别:</label>
+    <div class="button-group" id="genderGroup">
+        <button data-gender="男">男</button>
+        <button data-gender="女">女</button>
+        <button data-gender="其他">其他</button>
     </div>
 
-    <!-- 步骤2：性格选择 -->
-    <div class="step" id="step2">
-        <label>选择角色性格:</label>
-        <select id="charPersonality">
-            <option value="冷淡">冷淡</option>
-            <option value="温柔">温柔</option>
-            <option value="危险感">危险感</option>
-            <option value="克制">克制</option>
-            <option value="淘气">淘气</option>
-        </select>
-        <button onclick="nextStep(2)">下一步</button>
+    <!-- 职业选择 -->
+    <label>选择职业:</label>
+    <div class="button-group" id="jobGroup">
+        <button>医生</button>
+        <button>学生</button>
+        <button>冒险者</button>
+        <button>同事</button>
+        <button>艺术家</button>
     </div>
 
-    <!-- 步骤3：关系选择 -->
-    <div class="step" id="step3">
-        <label>选择角色与用户关系:</label>
-        <select id="charRelation">
-            <option value="同事">同事</option>
-            <option value="医生">医生</option>
-            <option value="室友">室友</option>
-            <option value="前任">前任</option>
-            <option value="陌生人">陌生人</option>
-        </select>
-        <button onclick="nextStep(3)">下一步</button>
+    <!-- 性格选择 -->
+    <label>选择性格（最多3个）:</label>
+    <div class="button-group" id="personalityGroup">
+        <button>冷淡</button>
+        <button>温柔</button>
+        <button>危险感</button>
+        <button>克制</button>
+        <button>淘气</button>
+        <button>热情</button>
+        <button>理智</button>
+        <button>胆小</button>
+        <button>活泼</button>
     </div>
 
-    <!-- 步骤4：场景选择 -->
-    <div class="step" id="step4">
-        <label>选择开场白场景:</label>
-        <select id="charScene">
-            <option value="深夜">深夜</option>
-            <option value="雨天">雨天</option>
-            <option value="电梯">电梯</option>
-            <option value="医院">医院</option>
-            <option value="办公室">办公室</option>
-        </select>
-        <button onclick="generateCharacter()">生成角色</button>
+    <!-- 场景选择 -->
+    <label>选择场景:</label>
+    <div class="button-group" id="sceneGroup">
+        <button>深夜</button>
+        <button>雨天</button>
+        <button>电梯</button>
+        <button>医院</button>
+        <button>办公室</button>
     </div>
 
-    <!-- 步骤5：结果展示 -->
-    <div class="step" id="step5">
-        <h2 style="text-align:center; color:#f08c82;">生成结果</h2>
-        <div class="result" id="output"></div>
-        <button onclick="restart()">重新生成</button>
-    </div>
+    <button style="margin-top:20px; background:#f08c82; color:white; border:none; padding:10px 20px; border-radius:8px;" onclick="generateCharacter()">生成角色</button>
 
+    <div class="result" id="output" style="display:none;"></div>
 </div>
 
 <script>
-// 内容库
-const personalityText = {
-    "冷淡":["夜晚办公室的灯光拉长了他的影子，他只是淡淡瞥了你一眼。","双手抱胸，眼神从上扫过你，却没有一句问候。","说话简短干脆，像风掠过纸张，留下冰冷的余温。"],
-    "温柔":["微微倾身，把你的外套轻轻理整，语气柔软如晨光。","目光落在你手上的动作上，像在读一本安静的书。","轻轻叹息，声音温暖，却带着无法忽视的关心。"],
-    "危险感":["黑夜里，影子在墙上摇曳，他微微侧身，目光直透你心底。","指尖触到桌面，仿佛随时会敲击出不可预料的节奏。","语气低沉，每一句话都像暗藏刀锋，让人心跳微微加速。"],
-    "克制":["语调平稳，即使心里起波澜，也不让表情溢出。","动作小心翼翼，每一个手势都像经过深思熟虑。","即便有人靠近，他也只是轻轻点头，没有多余情绪。"],
-    "淘气":["偷偷把桌上的笔弹向空中，看你有没有注意。","嘴角上扬，眼里闪着不合年龄的光。","轻声哼唱，像把世界缩小成了只属于自己的小角落。"]
-};
-const relationText = {
-    "同事":["在茶水间看你忙碌，却只是轻轻挑眉，没有多余评价。","偶尔提醒你会议时间，语气像风吹过办公室的纸页。","偶然经过你桌旁，留下微微的气息，没有停留。"],
-    "医生":["递给你病历时指尖微微颤抖，似乎多了一点关注。","夜深值班，他平稳的呼吸像不会被打扰的钟表。","静静观察你的状态，却不打扰你专注的每一个动作。"],
-    "室友":["微微探头看你在做什么，轻声问一句：“在忙吗？”","把你常用的杯子摆正，动作细腻却不张扬。","躺在床上，偷偷哼着歌，像把房间变成自己小世界。"],
-    "前任":["偶尔回头看你，眼里有一丝无法言说的故事。","言语之间带着熟悉的距离感，像曾经的影子。","微笑里夹杂一丝揶揄，让你心里微微颤动。"],
-    "陌生人":["初次见面，眼神像试探锋利的刀片。","保持适当距离，言语简短却让人注意到每一个细节。","微微抬头打量你，像在暗中评估环境与自己。"]
-};
-const sceneText = {
-    "深夜":["街灯下，他的影子被拉得很长，微风带着夜的凉意。","夜深人静，办公室里只剩键盘敲击声和他的呼吸。","灯光昏暗，影子在墙上摇晃，他的存在感悄然渗入空间。"],
-    "雨天":["雨滴打在窗户上，反射微弱灯光，他撑着伞静静等你。","雨声掩盖了所有噪音，只剩下他轻轻走来的脚步声。","街角的水洼映出他的身影，湿发贴在额头，带着冷意。"],
-    "电梯":["狭小空间里，他侧头看你，气息几乎触碰到你肩膀。","电梯轻轻晃动，每一层停靠都像节奏分明的暗示。","按钮灯光映照脸庞，微微阴影让表情更耐人寻味。"],
-    "医院":["消毒水味混合夜色，他的手指在病历上划过，动作专注。","值班灯光下，他的目光停留在你手中的文件。","空荡走廊里，脚步声回响，他却安静如同空气。"],
-    "办公室":["键盘声与打印机嗡鸣，他低头工作，偶尔抬眼瞥你。","文件堆旁，他整理资料，动作轻巧却精准。","灯光白皙，他的影子与桌面交错，像隐藏的故事。"]
-};
+// 状态变量
+let selectedGender = "";
+let selectedJob = "";
+let selectedPersonality = [];
+let selectedScene = "";
 
-// 步骤控制
-let currentStep = 1;
-function updateProgress() { document.getElementById("progress").style.width = (currentStep-1)/4*100+"%"; }
-function nextStep(step){
-    document.getElementById("step"+step).classList.remove("active");
-    currentStep++;
-    document.getElementById("step"+(step+1)).classList.add("active");
-    updateProgress();
-}
-function restart(){
-    document.querySelectorAll(".step").forEach((el,i)=>el.classList.remove("active"));
-    document.getElementById("step1").classList.add("active");
-    currentStep=1;
-    updateProgress();
-    document.getElementById("output").innerHTML="";
-}
+// 性别选择
+document.querySelectorAll("#genderGroup button").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+        document.querySelectorAll("#genderGroup button").forEach(b=>b.classList.remove("selected"));
+        btn.classList.add("selected");
+        selectedGender = btn.dataset.gender;
+    });
+});
+
+// 职业选择
+document.querySelectorAll("#jobGroup button").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+        document.querySelectorAll("#jobGroup button").forEach(b=>b.classList.remove("selected"));
+        btn.classList.add("selected");
+        selectedJob = btn.textContent;
+    });
+});
+
+// 性格选择
+document.querySelectorAll("#personalityGroup button").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+        const text = btn.textContent;
+        if(btn.classList.contains("selected")){
+            btn.classList.remove("selected");
+            selectedPersonality = selectedPersonality.filter(p=>p!==text);
+        } else {
+            if(selectedPersonality.length>=3){ alert("最多选择3个性格"); return; }
+            btn.classList.add("selected");
+            selectedPersonality.push(text);
+        }
+    });
+});
+
+// 场景选择
+document.querySelectorAll("#sceneGroup button").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+        document.querySelectorAll("#sceneGroup button").forEach(b=>b.classList.remove("selected"));
+        btn.classList.add("selected");
+        selectedScene = btn.textContent;
+    });
+});
+
+// 内容库（丰富版）
+const appearanceText = ["黑色长发，杏仁眼，穿着宽松卫衣","金色短发，碧眼，戴着眼镜，穿衬衫","棕色卷发，深褐色眼睛，穿运动服","银白长发，淡蓝眼，穿风衣"];
+const actionText = ["轻轻敲着桌面","微笑看着你","双手抱胸，略显冷淡","低声哼唱，动作优雅","偷偷玩手指"];
+const sceneText = {
+    "深夜":["街灯下的影子拉长，他静静站在窗边。","夜深人静，办公室里只剩键盘声。"],
+    "雨天":["雨滴打在窗户，他撑伞静静走来。","雨水反射街灯，他轻轻呼吸。"],
+    "电梯":["电梯狭小，他侧身看你。","按钮灯光映照脸庞，微微阴影。"],
+    "医院":["值班灯光下，他专注翻阅病历。","空荡走廊里，脚步声回响，他安静如空气。"],
+    "办公室":["文件堆旁，他整理资料，动作精准。","灯光下，他偶尔抬眼瞥你。"]
+};
+const jobText = {
+    "医生":["擅长精准操作，语气温和","常穿白大褂，动作干净利落"],
+    "学生":["喜欢记录笔记，偶尔迟到","背着书包，动作轻快"],
+    "冒险者":["动作敏捷，眼神警觉","随时检查装备，步伐坚定"],
+    "同事":["处理文件快速，偶尔关心他人","穿着职业装，动作利落"],
+    "艺术家":["喜欢观察细节，充满想象力","随手涂鸦，动作灵动"]
+};
 
 // 生成角色
 function generateCharacter(){
     const name = document.getElementById("charName").value || "角色";
-    const gender = document.getElementById("charGender").value;
-    const personality = document.getElementById("charPersonality").value;
-    const relation = document.getElementById("charRelation").value;
-    const scene = document.getElementById("charScene").value;
+    if(!selectedGender){ alert("请选择性别"); return; }
+    if(!selectedJob){ alert("请选择职业"); return; }
+    if(selectedPersonality.length===0){ alert("请选择至少一个性格"); return; }
+    if(!selectedScene){ alert("请选择场景"); return; }
 
-    const pText = personalityText[personality][Math.floor(Math.random()*personalityText[personality].length)];
-    const rText = relationText[relation][Math.floor(Math.random()*relationText[relation].length)];
-    const sText = sceneText[scene][Math.floor(Math.random()*sceneText[scene].length)];
+    // 随机外貌
+    const appearance = appearanceText[Math.floor(Math.random()*appearanceText.length)];
+    // 随机行为
+    const actions = actionText[Math.floor(Math.random()*actionText.length)];
+    // 场景画面
+    const sceneDesc = sceneText[selectedScene][Math.floor(Math.random()*sceneText[selectedScene].length)];
+    // 职业特征
+    const jobDesc = jobText[selectedJob][Math.floor(Math.random()*jobText[selectedJob].length)];
 
-    const opening = `“${pText.split('，')[0]}”，他对你说。`;
+    // 输出角色设定
+    const output = `<strong>角色姓名:</strong> ${name} (${selectedGender})<br>
+<strong>职业:</strong> ${selectedJob}<br>
+<strong>性格标签:</strong> ${selectedPersonality.join(" / ")}<br>
+<strong>外貌特征:</strong> ${appearance}<br>
+<strong>行为习惯:</strong> ${actions}, ${jobDesc}<br>
+<strong>场景画面示例:</strong> ${sceneDesc}<br>
+<strong>开场白:</strong> "${actions}"，他对你说。`;
 
-    document.getElementById("output").innerHTML = `<strong>角色名称:</strong> ${name} (${gender})<br>
-<strong>角色设定:</strong> ${pText} ${rText} ${sText}<br>
-<strong>开场白:</strong> ${opening}`;
-
-    document.getElementById("step4").classList.remove("active");
-    document.getElementById("step5").classList.add("active");
-    currentStep=5; updateProgress();
+    const outDiv = document.getElementById("output");
+    outDiv.style.display="block";
+    outDiv.innerHTML = output;
 }
 </script>
