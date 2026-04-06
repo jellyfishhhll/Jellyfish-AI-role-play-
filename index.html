@@ -30,7 +30,7 @@
       min-height: 100vh;
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start; /* 改为 top 对齐，防止内容过高被截断 */
       padding: 30px 20px;
       -webkit-font-smoothing: antialiased;
       line-height: 1.6;
@@ -40,7 +40,7 @@
       width: 100%; max-width: 620px; background: var(--bg-card);
       border: 1px solid var(--border); border-radius: 6px;
       box-shadow: var(--shadow); padding: 44px 38px 36px;
-      position: relative; margin: auto; overflow: hidden;
+      position: relative; margin: 30px auto 0; overflow: hidden;
       border-top: 3px solid var(--text-main);
     }
 
@@ -69,7 +69,7 @@
     }
     .sub-title { font-size: 0.8rem; color: var(--text-sub); font-weight: 400; margin-left: 8px; letter-spacing: 0; font-family: 'LXGW WenKai', sans-serif; }
     
-    .category-group { margin-bottom: 14px; margin-top: 6px; }
+    .category-group { margin-bottom: 16px; margin-top: 6px; }
     .category-label { font-size: 0.75rem; color: var(--text-sub); margin-bottom: 8px; display: block; letter-spacing: 1px; border-left: 2px solid var(--text-main); padding-left: 8px; }
 
     /* 表单元素 */
@@ -82,13 +82,12 @@
 
     .gender-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 30px; }
     
+    /* ✅ 移除滑动限制，完全展示标签 */
     .options-grid { 
       display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 10px; 
-      max-height: 220px; overflow-y: auto; padding-right: 6px; padding-top: 4px;
-      margin-bottom: 12px; box-sizing: border-box;
+      max-height: none; overflow-y: visible; padding-right: 0; padding-top: 0;
+      margin-bottom: 16px; box-sizing: border-box;
     }
-    .options-grid::-webkit-scrollbar { width: 3px; }
-    .options-grid::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
     
     .gender-btn, .tag-btn {
       background: #fff; border: 1px solid var(--border); color: var(--text-sub); padding: 8px 6px; border-radius: var(--radius);
@@ -135,9 +134,9 @@
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
     @media (max-width: 540px) {
-      .app-container { padding: 30px 22px 24px; }
+      .app-container { padding: 30px 22px 24px; margin-top: 10px; }
       h2 { font-size: 1.3rem; margin-bottom: 24px; }
-      .options-grid { grid-template-columns: repeat(2, 1fr); max-height: 190px; }
+      .options-grid { grid-template-columns: repeat(3, 1fr); } /* 移动端3列防过长 */
       .gender-selector { grid-template-columns: 1fr; }
       .nav-btns { flex-direction: column-reverse; }
       .btn { width: 100%; text-align: center; }
@@ -159,7 +158,7 @@
   <main class="steps-wrapper" id="stepsWrapper">
     <section id="step1" class="step active">
       <h2>角色名录</h2>
-      <input type="text" id="charName" placeholder="请输入角色姓名" autocomplete="off">
+      <input type="text" id="charName" placeholder="请输入姓名" autocomplete="off">
       <div class="gender-selector">
         <button class="gender-btn" data-val="女性">女性</button>
         <button class="gender-btn" data-val="男性">男性</button>
@@ -221,7 +220,7 @@ const DATA = {
     {"tag": "调酒师", "description": "站姿笔挺且稳重，手指灵活。习惯观察客人的情绪状态来调整推杯力度，对杯具洁净度要求极高。深夜下班后习惯独自喝杯温水，对手部护理和动作节奏有职业坚持。"},
     {"tag": "健身教练", "description": "随身带着大容量水壶，精确记录饮食时间与热量。习惯纠正身边人的坐姿或体态，即便休息时也保持着核心发力感。对运动器材的磨损状况非常熟悉，常备备用汗巾。"},
     {"tag": "投行主管", "description": "手机从不离手，常在多个时区窗口间切换。习惯快速阅读报表并标注核心数据，交谈逻辑性强。常在深夜出没于高端商务酒廊，对市场波动和时间成本计算有职业本能。"},
-    {"tag": "集团总裁", "description": "手机常年静音但屏幕闪烁不断，休息日也习惯在清晨回复邮件。随身带着润喉糖，谈话间习惯复述重点以确认效率。对咖啡品质有固定依赖，习惯在赶路间隙闭目养神，衣服内侧常备几张不同场合的名片。"},
+    {"tag": "集团总裁", "description": "休息日也习惯在清晨回复邮件。随身带着润喉糖，谈话间习惯复述重点以确认效率。对咖啡品质有固定依赖，习惯在赶路间隙闭目养神，衣服内侧常备几张不同场合的名片。"},
     {"tag": "职业保镖", "description": "站位永远处于雇主侧后方，双眼习惯扫描出口与盲区。身体重心保持微曲，对突发声响反应极快。极少放下警戒状态，对随身携带的通讯器材和防御装备维护细致。"},
     {"tag": "独立摄影师", "description": "镜头盖习惯别在腰间，肩膀有长年背负相机的压痕。习惯寻找光源角度，对景深有职业直觉。常在不同城市间奔波，包里塞满储存卡，习惯通过取景框观察环境。"},
     {"tag": "同级校草", "description": "课桌里塞满来路不明的字条，外套总松垮挂在肩上。常出现在球场边缘或学校后街，习惯在课间补觉。周围总是环绕着各种小道消息，对社交场合的关注感到习以为常。"},
@@ -499,8 +498,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const group = document.createElement('div');
       group.className = 'category-group';
       group.innerHTML = `<span class="category-label">${cat} ${cat === '特殊辨识点' ? '<span class="sub-title">(选填)</span>' : ''}</span>`;
-      const grid = document.createElement('div'); grid.className = 'options-grid';
-      grid.style.maxHeight = cat === '五官' || cat === '身材' ? '120px' : '90px';
+      const grid = document.createElement('div'); 
+      grid.className = 'options-grid';
+      // ✅ 移除了 grid.style.maxHeight，确保标签完全展示
+      // grid.style.maxHeight = cat === '五官' || cat === '身材' ? '120px' : '90px'; 
       
       DATA.appearances.filter(a => a.category === cat).forEach(item => {
         const btn = document.createElement('button');
@@ -515,6 +516,7 @@ document.addEventListener('DOMContentLoaded', () => {
             state.appearance[cat] = item;
           }
           updateNext2State();
+          adjustHeight(); // 更新高度（虽然高度不变，但保持逻辑）
         });
         grid.appendChild(btn);
       });
