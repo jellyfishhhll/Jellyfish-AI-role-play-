@@ -39,7 +39,7 @@
     .app-container {
       width: 100%; max-width: 620px; background: var(--bg-card);
       border: 1px solid var(--border); border-radius: 6px;
-      box-shadow: var(--shadow); padding: 44px 38px; /* 增加整体内边距 */
+      box-shadow: var(--shadow); padding: 44px 38px 36px;
       position: relative; margin: auto; overflow: hidden;
       border-top: 3px solid var(--text-main);
     }
@@ -84,7 +84,7 @@
     
     .options-grid { 
       display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 10px; 
-      max-height: 220px; overflow-y: auto; padding-right: 6px; padding-top: 4px; /* 增加顶部内边距防遮挡 */
+      max-height: 220px; overflow-y: auto; padding-right: 6px; padding-top: 4px;
       margin-bottom: 12px; box-sizing: border-box;
     }
     .options-grid::-webkit-scrollbar { width: 3px; }
@@ -107,6 +107,13 @@
     .btn.secondary { background: transparent; color: var(--text-sub); }
     .btn.secondary:hover { border-color: var(--text-sub); color: var(--text-main); background: #fafafa; }
 
+    /* 结果页引言 */
+    .step5-quote {
+      font-size: 0.82rem; color: var(--text-sub); font-family: 'LXGW WenKai', sans-serif;
+      line-height: 1.85; margin: 6px 0 22px 0; padding: 0 2px;
+      opacity: 0.8; letter-spacing: 0.5px;
+    }
+
     /* 结果区 */
     #output-text {
       background: #fcfcfc; border: 1px solid var(--border); border-radius: 4px; padding: 20px; white-space: pre-wrap;
@@ -114,11 +121,21 @@
       overflow-y: auto; margin-bottom: 22px; font-size: 0.9rem; letter-spacing: 0.5px;
       box-shadow: inset 0 0 0 1px rgba(0,0,0,0.02);
     }
+
+    /* 全局底部 Slogan */
+    .page-slogan {
+      display: block; text-align: center; font-size: 0.62rem; color: #a8a8a8;
+      font-family: 'Noto Serif SC', serif; letter-spacing: 2.5px;
+      margin-top: 28px; padding-top: 14px; border-top: 1px solid var(--border);
+      opacity: 0.75; transition: opacity 0.3s ease;
+    }
+    .page-slogan:hover { opacity: 1; }
+
     .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(10px); background: var(--text-main); color: #fff; padding: 8px 16px; border-radius: 4px; font-size: 0.8rem; opacity: 0; pointer-events: none; transition: var(--transition); font-family: 'LXGW WenKai', sans-serif; }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
     @media (max-width: 540px) {
-      .app-container { padding: 30px 22px; }
+      .app-container { padding: 30px 22px 24px; }
       h2 { font-size: 1.3rem; margin-bottom: 24px; }
       .options-grid { grid-template-columns: repeat(2, 1fr); max-height: 190px; }
       .gender-selector { grid-template-columns: 1fr; }
@@ -180,6 +197,7 @@
 
     <section id="step5" class="step">
       <h2>灵魂的摹本</h2>
+      <p class="step5-quote">始于虚构，归于共鸣。我们穿梭在无数个平行的梦境里，试图用最轻盈的文字，锚定一个沉重的灵魂。这本摹本不设终点，只为记录下那一抹转瞬即逝的神韵。</p>
       <pre id="output-text"></pre>
       <div class="nav-btns">
         <button id="copy-btn" class="btn primary">一键复制</button>
@@ -187,6 +205,8 @@
       </div>
     </section>
   </main>
+
+  <footer class="page-slogan">在虚构的荒原里，捕获一寸真实的温存。</footer>
 </div>
 
 <div class="toast" id="toast">已复制到剪贴板</div>
@@ -201,7 +221,7 @@ const DATA = {
     {"tag": "调酒师", "description": "站姿笔挺且稳重，手指灵活。习惯观察客人的情绪状态来调整推杯力度，对杯具洁净度要求极高。深夜下班后习惯独自喝杯温水，对手部护理和动作节奏有职业坚持。"},
     {"tag": "健身教练", "description": "随身带着大容量水壶，精确记录饮食时间与热量。习惯纠正身边人的坐姿或体态，即便休息时也保持着核心发力感。对运动器材的磨损状况非常熟悉，常备备用汗巾。"},
     {"tag": "投行主管", "description": "手机从不离手，常在多个时区窗口间切换。习惯快速阅读报表并标注核心数据，交谈逻辑性强。常在深夜出没于高端商务酒廊，对市场波动和时间成本计算有职业本能。"},
-    {"tag": "私家侦探", "description": "常在隐蔽处长时间蹲守，随身携带高倍望远镜和备用电池。习惯从生活垃圾或收据中搜集线索，对路人长相过目不忘。车内常备简餐和换洗衣服，对监控探头位置敏感。"},
+    {"tag": "集团总裁", "description": "手机常年静音但屏幕闪烁不断，休息日也习惯在清晨回复邮件。随身带着润喉糖，谈话间习惯复述重点以确认效率。对咖啡品质有固定依赖，习惯在赶路间隙闭目养神，衣服内侧常备几张不同场合的名片。"},
     {"tag": "职业保镖", "description": "站位永远处于雇主侧后方，双眼习惯扫描出口与盲区。身体重心保持微曲，对突发声响反应极快。极少放下警戒状态，对随身携带的通讯器材和防御装备维护细致。"},
     {"tag": "独立摄影师", "description": "镜头盖习惯别在腰间，肩膀有长年背负相机的压痕。习惯寻找光源角度，对景深有职业直觉。常在不同城市间奔波，包里塞满储存卡，习惯通过取景框观察环境。"},
     {"tag": "同级校草", "description": "课桌里塞满来路不明的字条，外套总松垮挂在肩上。常出现在球场边缘或学校后街，习惯在课间补觉。周围总是环绕着各种小道消息，对社交场合的关注感到习以为常。"},
@@ -486,7 +506,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const btn = document.createElement('button');
         btn.className = 'tag-btn'; btn.textContent = item.tag;
         btn.addEventListener('click', () => {
-          // ✅ 修复：支持点击已选项取消选择
           const isAlreadySelected = btn.classList.contains('selected');
           grid.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('selected'));
           if (isAlreadySelected) {
