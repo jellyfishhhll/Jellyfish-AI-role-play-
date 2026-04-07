@@ -30,7 +30,7 @@
       min-height: 100vh;
       display: flex;
       justify-content: center;
-      align-items: flex-start; /* 改为 top 对齐，防止内容过高被截断 */
+      align-items: flex-start;
       padding: 30px 20px;
       -webkit-font-smoothing: antialiased;
       line-height: 1.6;
@@ -50,7 +50,6 @@
       opacity: 0.15; pointer-events: none;
     }
 
-    /* 进度指示器 */
     .progress-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 34px; position: relative; padding: 0 4px; }
     .progress-line { position: absolute; left: 20px; right: 20px; top: 50%; height: 1px; background: var(--border); transform: translateY(-50%); z-index: 0; }
     .progress-fill { position: absolute; left: 20px; top: 50%; height: 1px; background: var(--text-main); transform: translateY(-50%); z-index: 1; transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
@@ -58,7 +57,6 @@
     .step-dot { width: 24px; height: 24px; border-radius: 50%; background: #fff; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; color: var(--text-sub); transition: var(--transition); font-family: 'Noto Serif SC', serif; }
     .step-dot.active { border-color: var(--text-main); background: var(--text-main); color: #fff; transform: scale(1.1); }
 
-    /* 步骤容器与动画 */
     .steps-wrapper { position: relative; min-height: 260px; transition: height 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
     .step { position: absolute; top: 0; left: 0; width: 100%; opacity: 0; transform: translateY(12px); pointer-events: none; transition: var(--transition); visibility: hidden; }
     .step.active { opacity: 1; transform: translateY(0); pointer-events: auto; visibility: visible; position: relative; }
@@ -72,7 +70,6 @@
     .category-group { margin-bottom: 16px; margin-top: 6px; }
     .category-label { font-size: 0.75rem; color: var(--text-sub); margin-bottom: 8px; display: block; letter-spacing: 1px; border-left: 2px solid var(--text-main); padding-left: 8px; }
 
-    /* 表单元素 */
     input[type="text"] {
       width: 100%; padding: 10px 0; background: transparent; border: none; border-bottom: 1px solid var(--border);
       color: var(--text-main); font-size: 1rem; margin-bottom: 28px; transition: var(--transition); font-family: inherit;
@@ -82,7 +79,6 @@
 
     .gender-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 30px; }
     
-    /* ✅ 移除滑动限制，完全展示标签 */
     .options-grid { 
       display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 10px; 
       max-height: none; overflow-y: visible; padding-right: 0; padding-top: 0;
@@ -97,7 +93,6 @@
     .gender-btn:hover, .tag-btn:hover { border-color: var(--text-main); color: var(--text-main); transform: translateY(-2px); background: var(--hover-bg); }
     .gender-btn.selected, .tag-btn.selected { background: var(--selected-bg); border-color: var(--border-active); color: var(--text-main); transform: translateY(-1px); box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
 
-    /* 按钮组 */
     .nav-btns { display: flex; justify-content: flex-end; gap: 12px; margin-top: 26px; padding-top: 18px; border-top: 1px dashed var(--border); }
     .btn { padding: 9px 18px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: var(--transition); letter-spacing: 1px; font-family: 'LXGW WenKai', sans-serif; }
     .btn.primary { background: var(--text-main); color: #fff; border-color: var(--text-main); }
@@ -106,14 +101,12 @@
     .btn.secondary { background: transparent; color: var(--text-sub); }
     .btn.secondary:hover { border-color: var(--text-sub); color: var(--text-main); background: #fafafa; }
 
-    /* 结果页引言 */
     .step5-quote {
       font-size: 0.82rem; color: var(--text-sub); font-family: 'LXGW WenKai', sans-serif;
       line-height: 1.85; margin: 6px 0 22px 0; padding: 0 2px;
       opacity: 0.8; letter-spacing: 0.5px;
     }
 
-    /* 结果区 */
     #output-text {
       background: #fcfcfc; border: 1px solid var(--border); border-radius: 4px; padding: 20px; white-space: pre-wrap;
       font-family: 'LXGW WenKai', monospace; line-height: 1.75; color: #333; min-height: 180px; max-height: 400px;
@@ -121,7 +114,6 @@
       box-shadow: inset 0 0 0 1px rgba(0,0,0,0.02);
     }
 
-    /* 全局底部 Slogan */
     .page-slogan {
       display: block; text-align: center; font-size: 0.62rem; color: #a8a8a8;
       font-family: 'Noto Serif SC', serif; letter-spacing: 2.5px;
@@ -136,7 +128,7 @@
     @media (max-width: 540px) {
       .app-container { padding: 30px 22px 24px; margin-top: 10px; }
       h2 { font-size: 1.3rem; margin-bottom: 24px; }
-      .options-grid { grid-template-columns: repeat(3, 1fr); } /* 移动端3列防过长 */
+      .options-grid { grid-template-columns: repeat(3, 1fr); }
       .gender-selector { grid-template-columns: 1fr; }
       .nav-btns { flex-direction: column-reverse; }
       .btn { width: 100%; text-align: center; }
@@ -232,7 +224,13 @@ const DATA = {
     {"tag": "职业杀手", "description": "随身携带常用折叠刀具，进屋先观察逃生路径。对体检指标有严格控制，确保身体机能巅峰。习惯在人群中隐藏存在感，极少留下个人信息或生活痕迹，对环境温度变化敏感。"},
     {"tag": "落魄流浪者", "description": "衣服边缘严重磨损且带有灰尘，随身家当塞在破旧包里。习惯蹲守在避风的建筑转角，对食物来源和夜晚安全有生存本能。走路步伐缓慢，习惯低头寻找可利用的废弃物。"},
     {"tag": "地下赛车手", "description": "掌心有握方向盘磨出的老茧，对发动机轰鸣声极度敏感。深夜出没于废弃公路或改装车库，习惯随身带着扳手。对路线规划和弯道极限有精准判断，车内常备清醒剂。"},
-    {"tag": "私人管家", "description": "熨烫平整的衬衫和白手套是标配，习惯精准记录雇主的所有生活喜好。动作轻盈无声，对餐具摆放间距有毫米级控制。全天候待命，对日程安排和家庭事务处理得滴水不漏。"}
+    {"tag": "私人管家", "description": "熨烫平整的衬衫和白手套是标配，习惯精准记录雇主的所有生活喜好。动作轻盈无声，对餐具摆放间距有毫米级控制。全天候待命，对日程安排和家庭事务处理得滴水不漏。"},
+    {"tag": "同校校花", "description": "课桌边总挂着一把浅色遮阳伞，书包带上系着亮眼的挂件。习惯在操场看台边喝柠檬水，经常需要清理储物柜里多出来的零食。走路时常低头看手机，对周围的注视显得有些习以为常，习惯随身带着小镜子。"},
+    {"tag": "花店学徒", "description": "指尖常有处理花茎留下的绿渍或细小刺痕，对空气湿度很敏感，休息时习惯坐在门口修剪残叶。身上总带着淡淡的泥土和枝叶香，习惯用透明胶带粘掉衣服上的草屑。"},
+    {"tag": "独立书店老板", "description": "习惯随手把散乱的书脊推齐，指腹因为长期翻阅纸张显得有些干燥。随身带着用来记录补货清单的小本子，对店内的灯光亮度和背景音乐有固定偏好。常在柜台后边喝茶边观察路人，对书籍的存放位置烂熟于心。"},
+    {"tag": "全职博主", "description": "习惯随手举起手机记录生活瞬间，对环境的光影效果有过目不忘的直觉。包里总装着小型三脚架，习惯在咖啡馆寻找最适合拍照的座位。对热点话题有职业嗅觉，休息日也在回复评论或整理素材。"},
+    {"tag": "电竞选手", "description": "思考时食指会无意识地快速敲击桌面，随身带着擦汗的纸巾，长期握鼠标的手心总有些潮汗。休息时习惯摘下耳机挂在颈间，对网络延迟有职业性的敏感。"},
+    {"tag": "宠物医生", "description": "习惯在接近小动物前先伸出手背让人家闻闻，对身上偶尔沾上的动物气味习以为常。指甲边缘常有被抓挠后的细小血痕，兜里总揣着几颗安抚用的肉干。下班前会反复洗手，对路边的流浪动物会下意识观察健康状况。"}
   ],
   "appearances": [
     {"category": "五官", "tag": "深邃", "description": "眉骨骨骼存在感极强，眼窝处有天然的阴影沉淀。鼻梁转折起伏明显，唇峰线条深重。面部光影交界线清晰，视觉中心集中在眼周的凹陷结构。"},
@@ -241,6 +239,16 @@ const DATA = {
     {"category": "五官", "tag": "明艳", "description": "五官占据面部的比例较大，色彩对比度极高。瞳仁漆黑，唇红齿白，睫毛浓密。面部线条具有极强的视觉张力，即便不做表情也具备极高的辨识度。"},
     {"category": "五官", "tag": "英挺", "description": "眉间平整舒展，鼻梁挺直如刻，下颚线轮廓清晰硬朗。双眼有神，眉尾处斜斜上扬。面部结构均衡且对称，透着一种利落干练的视觉美感。"},
     {"category": "五官", "tag": "稚气", "description": "脸颊带有微微的肉感，中庭较短。眼睛偏圆，黑眼珠占比很大，卧蚕明显。鼻头略显圆钝，人中深而清晰，透着一种未完全褪去青涩的钝感。"},
+    {"category": "发型", "tag": "细软长直发", "description": "发梢垂至腰间，低头时发丝如水般滑向胸前。"},
+    {"category": "发型", "tag": "蓬松短碎发", "description": "发丝长短不一，发顶常有几缕因睡觉压翘的碎发，摸上去干爽扎手。"},
+    {"category": "发型", "tag": "空气感长卷发", "description": "卷度从肩头散开，发丝常因静电略显凌乱，偶尔会挂在衣服扣子上。"},
+    {"category": "发型", "tag": "齐耳直短发", "description": "发尾刚好切平下颌线，侧头时发丝整齐晃动，露出干净的后颈皮肤。"},
+    {"category": "发型", "tag": "厚重长发", "description": "发量极多，垂在背部有明显的垂坠感，发色乌黑且透着健康的光泽。"},
+    {"category": "发型", "tag": "微长狼尾", "description": "前短后长，后脑勺的发丝参差地搭在衣领上，鬓角处修剪得极薄。"},
+    {"category": "发型", "tag": "中分及肩发", "description": "发尾刚好在锁骨处乱翘，发缝笔直，发丝随走动自然掠过肩膀。"},
+    {"category": "发型", "tag": "侧分短背头", "description": "长度刚好覆盖头顶，发丝向后梳理，发根处有明显的支撑力和定型感。"},
+    {"category": "发型", "tag": "过肩波浪长发", "description": "卷曲起伏明显，低头时发丝会像帘子一样遮住侧脸，发质略显干燥。"},
+    {"category": "发型", "tag": "碎盖短发", "description": "刘海密实地盖住眉毛，发顶层次分明，发根处总带着一种天然的蓬松感。"},
     {"category": "瞳孔颜色", "tag": "琥珀", "description": "澄澈透亮的淡金棕色，泛着暖光。"},
     {"category": "瞳孔颜色", "tag": "墨色", "description": "浓郁到化不开的深黑，沉静内敛。"},
     {"category": "瞳孔颜色", "tag": "灰蓝", "description": "浅灰与幽蓝交织，色调冷淡忧郁。"},
@@ -493,15 +501,14 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentStep = 1;
 
   function renderAppearance() {
-    const cats = ['五官', '瞳孔颜色', '身材', '特殊辨识点'];
+    // 按顺序排列：五官 -> 发型(新增) -> 瞳孔颜色 -> 身材 -> 特殊辨识点(选填)
+    const cats = ['五官', '发型', '瞳孔颜色', '身材', '特殊辨识点'];
     cats.forEach(cat => {
       const group = document.createElement('div');
       group.className = 'category-group';
       group.innerHTML = `<span class="category-label">${cat} ${cat === '特殊辨识点' ? '<span class="sub-title">(选填)</span>' : ''}</span>`;
       const grid = document.createElement('div'); 
       grid.className = 'options-grid';
-      // ✅ 移除了 grid.style.maxHeight，确保标签完全展示
-      // grid.style.maxHeight = cat === '五官' || cat === '身材' ? '120px' : '90px'; 
       
       DATA.appearances.filter(a => a.category === cat).forEach(item => {
         const btn = document.createElement('button');
@@ -516,7 +523,7 @@ document.addEventListener('DOMContentLoaded', () => {
             state.appearance[cat] = item;
           }
           updateNext2State();
-          adjustHeight(); // 更新高度（虽然高度不变，但保持逻辑）
+          adjustHeight();
         });
         grid.appendChild(btn);
       });
@@ -598,9 +605,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (target === 5) setTimeout(() => { generateOutput(); adjustHeight(); }, 80);
   }
 
+  // ✅ 更新验证逻辑：五官+发型+瞳孔颜色+身材 为必选项 (>=4)
   function validateStep(step) {
     if (step === 1) return state.name.trim() && state.gender;
-    if (step === 2) return Object.keys(state.appearance).length >= 3;
+    if (step === 2) return Object.keys(state.appearance).length >= 4;
     if (step === 3) return state.profession !== null;
     if (step === 4) return state.personalities.length >= 1;
     return false;
@@ -627,11 +635,12 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.classList.add('selected'); state.gender = btn.dataset.val; updateNext1State();
   }));
   function updateNext1State() { dom.next1.disabled = !(state.name.trim() && state.gender); }
-  function updateNext2State() { dom.next2.disabled = Object.keys(state.appearance).length < 3; }
+  function updateNext2State() { dom.next2.disabled = Object.keys(state.appearance).length < 4; }
   function updateNext3State() { dom.next3.disabled = state.profession === null; }
 
+  // ✅ 更新输出逻辑：按顺序包含“发型”
   function generateOutput() {
-    const catOrder = ['五官', '瞳孔颜色', '身材', '特殊辨识点'];
+    const catOrder = ['五官', '发型', '瞳孔颜色', '身材', '特殊辨识点'];
     const appearText = catOrder.map(cat => {
       const item = state.appearance[cat];
       return item ? `[${cat} · ${item.tag}]：${item.description}` : '';
