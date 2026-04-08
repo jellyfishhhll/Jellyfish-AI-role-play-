@@ -42,6 +42,7 @@
       box-shadow: var(--shadow); padding: 44px 38px 36px;
       position: relative; margin: 30px auto 0; overflow: hidden;
       border-top: 3px solid var(--text-main);
+      min-height: 450px;
     }
 
     .top-accent {
@@ -50,6 +51,7 @@
       opacity: 0.15; pointer-events: none;
     }
 
+    /* 进度指示器 */
     .progress-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 34px; position: relative; padding: 0 4px; }
     .progress-line { position: absolute; left: 20px; right: 20px; top: 50%; height: 1px; background: var(--border); transform: translateY(-50%); z-index: 0; }
     .progress-fill { position: absolute; left: 20px; top: 50%; height: 1px; background: var(--text-main); transform: translateY(-50%); z-index: 1; transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
@@ -57,6 +59,7 @@
     .step-dot { width: 24px; height: 24px; border-radius: 50%; background: #fff; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; color: var(--text-sub); transition: var(--transition); font-family: 'Noto Serif SC', serif; }
     .step-dot.active { border-color: var(--text-main); background: var(--text-main); color: #fff; transform: scale(1.1); }
 
+    /* 步骤容器 */
     .steps-wrapper { position: relative; min-height: 260px; transition: height 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
     .step { position: absolute; top: 0; left: 0; width: 100%; opacity: 0; transform: translateY(12px); pointer-events: none; transition: var(--transition); visibility: hidden; }
     .step.active { opacity: 1; transform: translateY(0); pointer-events: auto; visibility: visible; position: relative; }
@@ -101,6 +104,29 @@
     .btn.primary:disabled { background: #e0e0e0; border-color: #ddd; color: #999; cursor: not-allowed; transform: none; box-shadow: none; }
     .btn.secondary { background: transparent; color: var(--text-sub); }
     .btn.secondary:hover { border-color: var(--text-sub); color: var(--text-main); background: #fafafa; }
+
+    /* 加载动画样式 */
+    .loading-overlay {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(255, 255, 255, 0.96);
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
+      z-index: 10; backdrop-filter: blur(4px);
+    }
+    .loading-overlay.active { opacity: 1; pointer-events: auto; }
+    .loading-text {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 1rem; color: var(--text-main); margin-bottom: 20px;
+      letter-spacing: 2px; animation: breathe 2s infinite ease-in-out;
+    }
+    @keyframes breathe { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+    .loading-bar-container {
+      width: 60%; height: 2px; background: var(--border); border-radius: 2px; overflow: hidden;
+    }
+    .loading-bar-fill {
+      width: 0%; height: 100%; background: var(--text-main);
+      transition: width 0.1s linear;
+    }
 
     .step5-quote {
       font-size: 0.82rem; color: var(--text-sub); font-family: 'LXGW WenKai', sans-serif;
@@ -183,6 +209,7 @@
       <div id="personality-options" class="options-grid"></div>
       <div class="nav-btns">
         <button id="back4" class="btn secondary">上一步</button>
+        <!-- 绑定到 startLoading 而不是直接 goToStep -->
         <button id="generate-btn" class="btn primary" disabled>生成角色卡</button>
       </div>
     </section>
@@ -197,6 +224,14 @@
       </div>
     </section>
   </main>
+
+  <!-- 新增加载层 -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <p class="loading-text">正在迎来第一次心跳的共振</p>
+    <div class="loading-bar-container">
+      <div class="loading-bar-fill" id="loadingFill"></div>
+    </div>
+  </div>
 
   <footer class="page-slogan">在虚构的荒原里，捕获一寸真实的温存。</footer>
 </div>
@@ -232,7 +267,7 @@ const DATA = {
     {"tag": "全职博主", "description": "习惯随手举起手机记录生活瞬间，对环境的光影效果有过目不忘的直觉。包里总装着小型三脚架，习惯在咖啡馆寻找最适合拍照的座位。对热点话题有职业嗅觉，休息日也在回复评论或整理素材。"},
     {"tag": "电竞选手", "description": "思考时食指会无意识地快速敲击桌面，随身带着擦汗的纸巾，长期握鼠标的手心总有些潮汗。休息时习惯摘下耳机挂在颈间，对网络延迟有职业性的敏感。"},
     {"tag": "宠物医生", "description": "习惯在接近小动物前先伸出手背让人家闻闻，对身上偶尔沾上的动物气味习以为常。指甲边缘常有被抓挠后的细小血痕，兜里总揣着几颗安抚用的肉干。下班前会反复洗手，对路边的流浪动物会下意识观察健康状况。"},
-    {"tag": "纹身师", "description": "桌上总放着喝了一半的冰美式，旁边散落着几张画坏了的转印纸,休息时喜欢捏自己的虎口放松肌肉.随身带着一支出水极畅的黑色勾线笔，习惯在草稿纸甚至咖啡杯垫上随手设计图案。下班后会反复揉搓酸痛的手腕，身上常年带着清淡的酒精和凡士林混合后的味道。对不同部位皮肤的痛感反馈了如指掌。"}
+    {"tag": "纹身师", "description": "桌上总放着喝了一半的冰美式，旁边散落着几张画坏了的转印纸，休息时喜欢捏自己的虎口放松肌肉。随身带着一支出水极畅的黑色勾线笔，习惯在草稿纸甚至咖啡杯垫上随手设计图案。下班后会反复揉搓酸痛的手腕，身上常年带着清淡的酒精和凡士林混合后的味道。对不同部位皮肤的痛感反馈了如指掌。"}
   ],
   "appearances": [
     {"category": "五官", "tag": "深邃", "description": "眉骨骨骼存在感极强，眼窝处有天然的阴影沉淀。鼻梁转折起伏明显，唇峰线条深重。面部光影交界线清晰，视觉中心集中在眼周的凹陷结构。"},
@@ -500,7 +535,10 @@ document.addEventListener('DOMContentLoaded', () => {
     professionOptions: document.getElementById('profession-options'), next3: document.getElementById('next3'),
     personalityOptions: document.getElementById('personality-options'), generateBtn: document.getElementById('generate-btn'),
     outputText: document.getElementById('output-text'), copyBtn: document.getElementById('copy-btn'),
-    restartBtn: document.getElementById('restart-btn'), toast: document.getElementById('toast')
+    restartBtn: document.getElementById('restart-btn'), toast: document.getElementById('toast'),
+    // 新增加载相关元素
+    loadingOverlay: document.getElementById('loadingOverlay'),
+    loadingFill: document.getElementById('loadingFill')
   };
 
   let currentStep = 1;
@@ -521,7 +559,6 @@ document.addEventListener('DOMContentLoaded', () => {
           const isAlreadySelected = btn.classList.contains('selected');
           
           if (cat === '特殊辨识点') {
-            // 多选逻辑 (上限3)
             if (isAlreadySelected) {
               btn.classList.remove('selected');
               if (state.appearance[cat]) {
@@ -535,7 +572,6 @@ document.addEventListener('DOMContentLoaded', () => {
               state.appearance[cat].push(item);
             }
           } else {
-            // 单选逻辑
             grid.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('selected'));
             if (isAlreadySelected) {
               delete state.appearance[cat];
@@ -545,7 +581,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           }
 
-          // 更新视觉限制提示
           if (cat === '特殊辨识点' && state.appearance[cat] && state.appearance[cat].length >= 3) {
             grid.querySelectorAll('.tag-btn:not(.selected)').forEach(b => b.classList.add('limit-reached'));
           } else {
@@ -635,7 +670,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (target === 5) setTimeout(() => { generateOutput(); adjustHeight(); }, 80);
   }
 
-  // 校验逻辑优化：精确检查4个必选项
   function validateStep(step) {
     if (step === 1) return state.name.trim() && state.gender;
     if (step === 2) return ['五官', '发型', '瞳孔颜色', '身材'].every(cat => state.appearance[cat]);
@@ -656,8 +690,47 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('back3').addEventListener('click', () => goToStep(2));
   dom.next3.addEventListener('click', () => goToStep(4));
   document.getElementById('back4').addEventListener('click', () => goToStep(3));
-  dom.generateBtn.addEventListener('click', () => goToStep(5));
   dom.restartBtn.addEventListener('click', () => location.reload());
+
+  // 新的生成逻辑：启动加载动画
+  dom.generateBtn.addEventListener('click', () => {
+    if (!validateStep(4)) return;
+    generateOutput(); // 提前生成内容
+    startLoading();
+  });
+
+  // 新增加载动画函数
+  function startLoading() {
+    const overlay = dom.loadingOverlay;
+    const fill = dom.loadingFill;
+    
+    // 显示遮罩
+    overlay.classList.add('active');
+    
+    let progress = 0;
+    const duration = 2000; // 2秒
+    const intervalTime = 20; // 每20ms更新一次
+    const step = 100 / (duration / intervalTime);
+    
+    const interval = setInterval(() => {
+      progress += step;
+      if (progress >= 100) {
+        progress = 100;
+        clearInterval(interval);
+        fill.style.width = '100%';
+        
+        // 完成后切换到结果页
+        setTimeout(() => {
+          overlay.classList.remove('active');
+          goToStep(5);
+          // 重置进度条以便下次使用
+          setTimeout(() => { fill.style.width = '0%'; }, 100);
+        }, 400);
+      } else {
+        fill.style.width = `${progress}%`;
+      }
+    }, intervalTime);
+  }
 
   dom.charName.addEventListener('input', e => { state.name = e.target.value; updateNext1State(); });
   dom.genderBtns.forEach(btn => btn.addEventListener('click', () => {
@@ -668,7 +741,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateNext2State() { dom.next2.disabled = !validateStep(2); }
   function updateNext3State() { dom.next3.disabled = state.profession === null; }
 
-  // 输出逻辑优化：兼容单对象与数组
   function generateOutput() {
     const catOrder = ['五官', '发型', '瞳孔颜色', '身材', '特殊辨识点'];
     const appearText = catOrder.map(cat => {
