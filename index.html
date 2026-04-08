@@ -51,10 +51,25 @@
       opacity: 0.15; pointer-events: none;
     }
 
-    /* 进度指示器 */
-    .progress-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 34px; position: relative; padding: 0 4px; }
-    .progress-line { position: absolute; left: 20px; right: 20px; top: 50%; height: 1px; background: var(--border); transform: translateY(-50%); z-index: 0; }
-    .progress-fill { position: absolute; left: 20px; top: 50%; height: 1px; background: var(--text-main); transform: translateY(-50%); z-index: 1; transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+    /* 进度指示器 - 修复对齐问题 */
+    .progress-bar { 
+      display: flex; align-items: center; justify-content: space-between; 
+      margin-bottom: 34px; position: relative; 
+      /* 移除 padding，改为通过子元素精确控制 */
+    }
+    .progress-line { 
+      position: absolute; 
+      left: 12px; right: 12px; /* 精确对应圆点中心 (24px / 2) */
+      top: 50%; 
+      height: 1px; background: var(--border); 
+      transform: translateY(-50%); z-index: 0; 
+    }
+    .progress-fill { 
+      position: absolute; left: 0; top: 0; 
+      width: 0%; height: 100%; background: var(--text-main); 
+      z-index: 1; 
+      transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1); 
+    }
     .steps-indicator { display: flex; justify-content: space-between; width: 100%; z-index: 2; }
     .step-dot { width: 24px; height: 24px; border-radius: 50%; background: #fff; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; color: var(--text-sub); transition: var(--transition); font-family: 'Noto Serif SC', serif; }
     .step-dot.active { border-color: var(--text-main); background: var(--text-main); color: #fff; transform: scale(1.1); }
@@ -166,9 +181,11 @@
 
 <div class="app-container">
   <div class="top-accent"></div>
-  <div class="progress-bar">
-    <div class="progress-line"></div>
-    <div class="progress-fill" id="progressFill"></div>
+  <div class="progress-bar" id="progressBar">
+    <!-- 修复：将进度填充条嵌套在背景线内部 -->
+    <div class="progress-line">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
     <div class="steps-indicator">
       <span class="step-dot active">1</span><span class="step-dot">2</span><span class="step-dot">3</span><span class="step-dot">4</span>
     </div>
@@ -209,7 +226,6 @@
       <div id="personality-options" class="options-grid"></div>
       <div class="nav-btns">
         <button id="back4" class="btn secondary">上一步</button>
-        <!-- 绑定到 startLoading 而不是直接 goToStep -->
         <button id="generate-btn" class="btn primary" disabled>生成角色卡</button>
       </div>
     </section>
@@ -225,7 +241,7 @@
     </section>
   </main>
 
-  <!-- 新增加载层 -->
+  <!-- 加载层 -->
   <div class="loading-overlay" id="loadingOverlay">
     <p class="loading-text">正在迎来第一次心跳的共振</p>
     <div class="loading-bar-container">
@@ -527,6 +543,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const state = { name: '', gender: '', appearance: {}, profession: null, personalities: [] };
   const dom = {
     wrapper: document.getElementById('stepsWrapper'),
+    progressBar: document.getElementById('progressBar'),
     dots: document.querySelectorAll('.step-dot'),
     progressFill: document.getElementById('progressFill'),
     charName: document.getElementById('charName'),
@@ -536,7 +553,6 @@ document.addEventListener('DOMContentLoaded', () => {
     personalityOptions: document.getElementById('personality-options'), generateBtn: document.getElementById('generate-btn'),
     outputText: document.getElementById('output-text'), copyBtn: document.getElementById('copy-btn'),
     restartBtn: document.getElementById('restart-btn'), toast: document.getElementById('toast'),
-    // 新增加载相关元素
     loadingOverlay: document.getElementById('loadingOverlay'),
     loadingFill: document.getElementById('loadingFill')
   };
@@ -679,9 +695,19 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateProgress() {
-    const percent = ((currentStep - 1) / 4) * 100;
+    // 4个圆点只有3段间隔，因此除以3
+    const percent = ((currentStep - 1) / 3) * 100;
     dom.progressFill.style.width = `${Math.min(percent, 100)}%`;
     dom.dots.forEach((dot, i) => dot.classList.toggle('active', i < currentStep));
+    
+    // 进入第5步时隐藏进度条
+    if (currentStep === 5) {
+      dom.progressBar.style.opacity = '0';
+      dom.progressBar.style.pointerEvents = 'none';
+    } else {
+      dom.progressBar.style.opacity = '1';
+      dom.progressBar.style.pointerEvents = 'auto';
+    }
   }
 
   dom.next1.addEventListener('click', () => goToStep(2));
@@ -692,24 +718,19 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('back4').addEventListener('click', () => goToStep(3));
   dom.restartBtn.addEventListener('click', () => location.reload());
 
-  // 新的生成逻辑：启动加载动画
   dom.generateBtn.addEventListener('click', () => {
     if (!validateStep(4)) return;
-    generateOutput(); // 提前生成内容
+    generateOutput();
     startLoading();
   });
 
-  // 新增加载动画函数
   function startLoading() {
     const overlay = dom.loadingOverlay;
     const fill = dom.loadingFill;
-    
-    // 显示遮罩
     overlay.classList.add('active');
-    
     let progress = 0;
-    const duration = 2000; // 2秒
-    const intervalTime = 20; // 每20ms更新一次
+    const duration = 2000;
+    const intervalTime = 20;
     const step = 100 / (duration / intervalTime);
     
     const interval = setInterval(() => {
@@ -718,12 +739,9 @@ document.addEventListener('DOMContentLoaded', () => {
         progress = 100;
         clearInterval(interval);
         fill.style.width = '100%';
-        
-        // 完成后切换到结果页
         setTimeout(() => {
           overlay.classList.remove('active');
           goToStep(5);
-          // 重置进度条以便下次使用
           setTimeout(() => { fill.style.width = '0%'; }, 100);
         }, 400);
       } else {
