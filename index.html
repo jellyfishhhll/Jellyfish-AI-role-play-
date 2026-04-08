@@ -92,6 +92,7 @@
     }
     .gender-btn:hover, .tag-btn:hover { border-color: var(--text-main); color: var(--text-main); transform: translateY(-2px); background: var(--hover-bg); }
     .gender-btn.selected, .tag-btn.selected { background: var(--selected-bg); border-color: var(--border-active); color: var(--text-main); transform: translateY(-1px); box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+    .tag-btn.limit-reached { opacity: 0.35; pointer-events: none; }
 
     .nav-btns { display: flex; justify-content: flex-end; gap: 12px; margin-top: 26px; padding-top: 18px; border-top: 1px dashed var(--border); }
     .btn { padding: 9px 18px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: var(--transition); letter-spacing: 1px; font-family: 'LXGW WenKai', sans-serif; }
@@ -230,7 +231,8 @@ const DATA = {
     {"tag": "独立书店老板", "description": "习惯随手把散乱的书脊推齐，指腹因为长期翻阅纸张显得有些干燥。随身带着用来记录补货清单的小本子，对店内的灯光亮度和背景音乐有固定偏好。常在柜台后边喝茶边观察路人，对书籍的存放位置烂熟于心。"},
     {"tag": "全职博主", "description": "习惯随手举起手机记录生活瞬间，对环境的光影效果有过目不忘的直觉。包里总装着小型三脚架，习惯在咖啡馆寻找最适合拍照的座位。对热点话题有职业嗅觉，休息日也在回复评论或整理素材。"},
     {"tag": "电竞选手", "description": "思考时食指会无意识地快速敲击桌面，随身带着擦汗的纸巾，长期握鼠标的手心总有些潮汗。休息时习惯摘下耳机挂在颈间，对网络延迟有职业性的敏感。"},
-    {"tag": "宠物医生", "description": "习惯在接近小动物前先伸出手背让人家闻闻，对身上偶尔沾上的动物气味习以为常。指甲边缘常有被抓挠后的细小血痕，兜里总揣着几颗安抚用的肉干。下班前会反复洗手，对路边的流浪动物会下意识观察健康状况。"}
+    {"tag": "宠物医生", "description": "习惯在接近小动物前先伸出手背让人家闻闻，对身上偶尔沾上的动物气味习以为常。指甲边缘常有被抓挠后的细小血痕，兜里总揣着几颗安抚用的肉干。下班前会反复洗手，对路边的流浪动物会下意识观察健康状况。"},
+    {"tag": "纹身师", "description": "桌上总放着喝了一半的冰美式，旁边散落着几张画坏了的转印纸,休息时喜欢捏自己的虎口放松肌肉.随身带着一支出水极畅的黑色勾线笔，习惯在草稿纸甚至咖啡杯垫上随手设计图案。下班后会反复揉搓酸痛的手腕，身上常年带着清淡的酒精和凡士林混合后的味道。对不同部位皮肤的痛感反馈了如指掌。"}
   ],
   "appearances": [
     {"category": "五官", "tag": "深邃", "description": "眉骨骨骼存在感极强，眼窝处有天然的阴影沉淀。鼻梁转折起伏明显，唇峰线条深重。面部光影交界线清晰，视觉中心集中在眼周的凹陷结构。"},
@@ -255,6 +257,9 @@ const DATA = {
     {"category": "瞳孔颜色", "tag": "薄荷绿", "description": "极浅的青绿色，质感清透干净。"},
     {"category": "瞳孔颜色", "tag": "银灰", "description": "冰冷的浅灰色，带点金属质感。"},
     {"category": "瞳孔颜色", "tag": "烟紫红", "description": "暗紫底色泛着丝丝红芒，深沉神秘。"},
+    {"category": "瞳孔颜色", "tag": "茶褐", "description": "温润饱和的棕褐色调。"},
+    {"category": "瞳孔颜色", "tag": "淡紫", "description": "极其浅淡的冷紫色质感。"},
+    {"category": "瞳孔颜色", "tag": "绛红", "description": "极深的红，光下泛暗红光泽。"},
     {"category": "身材", "tag": "修长", "description": "四肢比例极长，指节与脚踝纤细。躯干整体向上延展，没有冗余赘肉。站立或行走时重心较高，肢体舒展空间大，线条呈现出一种舒缓且轻盈的纵向感。"},
     {"category": "身材", "tag": "匀称", "description": "全身脂肪与肌肉分布极度平衡，没有突出的棱角或肉感。骨架大小适中，肩颈、腰腹到腿部的转折弧度平滑自然。肌肉覆盖在骨骼上，厚薄得当且紧实。"},
     {"category": "身材", "tag": "单薄", "description": "骨架细小，肩膀略窄且厚度欠缺。胸腔轮廓隐约可见，侧面看去薄如纸片。肢体细瘦，关节处凸起明显，皮肤紧贴骨骼，透着一种缺乏负重能力的易碎感。"},
@@ -501,12 +506,11 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentStep = 1;
 
   function renderAppearance() {
-    // 按顺序排列：五官 -> 发型(新增) -> 瞳孔颜色 -> 身材 -> 特殊辨识点(选填)
     const cats = ['五官', '发型', '瞳孔颜色', '身材', '特殊辨识点'];
     cats.forEach(cat => {
       const group = document.createElement('div');
       group.className = 'category-group';
-      group.innerHTML = `<span class="category-label">${cat} ${cat === '特殊辨识点' ? '<span class="sub-title">(选填)</span>' : ''}</span>`;
+      group.innerHTML = `<span class="category-label">${cat} ${cat === '特殊辨识点' ? '<span class="sub-title">(可选填1-3项)</span>' : ''}</span>`;
       const grid = document.createElement('div'); 
       grid.className = 'options-grid';
       
@@ -515,13 +519,39 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.className = 'tag-btn'; btn.textContent = item.tag;
         btn.addEventListener('click', () => {
           const isAlreadySelected = btn.classList.contains('selected');
-          grid.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('selected'));
-          if (isAlreadySelected) {
-            delete state.appearance[cat];
+          
+          if (cat === '特殊辨识点') {
+            // 多选逻辑 (上限3)
+            if (isAlreadySelected) {
+              btn.classList.remove('selected');
+              if (state.appearance[cat]) {
+                state.appearance[cat] = state.appearance[cat].filter(i => i.tag !== item.tag);
+                if (state.appearance[cat].length === 0) delete state.appearance[cat];
+              }
+            } else {
+              if (!state.appearance[cat]) state.appearance[cat] = [];
+              if (state.appearance[cat].length >= 3) return;
+              btn.classList.add('selected');
+              state.appearance[cat].push(item);
+            }
           } else {
-            btn.classList.add('selected');
-            state.appearance[cat] = item;
+            // 单选逻辑
+            grid.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('selected'));
+            if (isAlreadySelected) {
+              delete state.appearance[cat];
+            } else {
+              btn.classList.add('selected');
+              state.appearance[cat] = item;
+            }
           }
+
+          // 更新视觉限制提示
+          if (cat === '特殊辨识点' && state.appearance[cat] && state.appearance[cat].length >= 3) {
+            grid.querySelectorAll('.tag-btn:not(.selected)').forEach(b => b.classList.add('limit-reached'));
+          } else {
+            grid.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('limit-reached'));
+          }
+
           updateNext2State();
           adjustHeight();
         });
@@ -605,10 +635,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (target === 5) setTimeout(() => { generateOutput(); adjustHeight(); }, 80);
   }
 
-  // ✅ 更新验证逻辑：五官+发型+瞳孔颜色+身材 为必选项 (>=4)
+  // 校验逻辑优化：精确检查4个必选项
   function validateStep(step) {
     if (step === 1) return state.name.trim() && state.gender;
-    if (step === 2) return Object.keys(state.appearance).length >= 4;
+    if (step === 2) return ['五官', '发型', '瞳孔颜色', '身材'].every(cat => state.appearance[cat]);
     if (step === 3) return state.profession !== null;
     if (step === 4) return state.personalities.length >= 1;
     return false;
@@ -635,15 +665,19 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.classList.add('selected'); state.gender = btn.dataset.val; updateNext1State();
   }));
   function updateNext1State() { dom.next1.disabled = !(state.name.trim() && state.gender); }
-  function updateNext2State() { dom.next2.disabled = Object.keys(state.appearance).length < 4; }
+  function updateNext2State() { dom.next2.disabled = !validateStep(2); }
   function updateNext3State() { dom.next3.disabled = state.profession === null; }
 
-  // ✅ 更新输出逻辑：按顺序包含“发型”
+  // 输出逻辑优化：兼容单对象与数组
   function generateOutput() {
     const catOrder = ['五官', '发型', '瞳孔颜色', '身材', '特殊辨识点'];
     const appearText = catOrder.map(cat => {
-      const item = state.appearance[cat];
-      return item ? `[${cat} · ${item.tag}]：${item.description}` : '';
+      const val = state.appearance[cat];
+      if (!val) return '';
+      if (Array.isArray(val)) {
+        return val.map(i => `[${cat} · ${i.tag}]：${i.description}`).join('\n');
+      }
+      return `[${cat} · ${val.tag}]：${val.description}`;
     }).filter(Boolean).join('\n');
     
     const profText = state.profession ? `[${state.profession.tag}]：${state.profession.description}` : '';
